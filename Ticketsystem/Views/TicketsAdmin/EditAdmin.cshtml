@@ -1,0 +1,73 @@
+﻿@model Ticket
+
+<h1>Ticket-ID @Model.TicketId</h1>
+
+
+<form method="post" asp-action="EditAdmin" asp-controller="TicketsAdmin" asp-route-id="@Model.TicketId">
+
+    @if (Model.Status == "Offen")
+    {
+        <!-- Neuen Kommentar hinzufügen -->
+        <div class="mb-3">
+            <label for="newComment" class="form-label">Kommentar hinzufügen</label>
+            <input id="newComment" name="newCommentText" type="text" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+
+            <label for="status" class="form-label">Status:</label>
+            <select class="form-select" id="status" name="newState" typeof="text">
+                <option value="Offen">Offen</option>
+                <option value="In Bearbeitung">In Bearbeitung</option>
+                <option value="Geschlossen">Geschlossen</option>
+            </select>
+        </div>
+        <br />
+        <button asp-action="EditAdmin" type="submit" class="btn btn-primary">Save Comment</button>
+
+    }
+
+    @if (Model.Status == "In Bearbeitung")
+    {
+        <!-- Neuen Kommentar hinzufügen -->
+        <div class="mb-3">
+            <label for="newComment" class="form-label">Kommentar hinzufügen</label>
+            <input id="newComment" name="newCommentText" type="text" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+
+            <label for="status" class="form-label">Status:</label>
+            <select class="form-select" id="status" name="newState" typeof="text">
+                <option value="In Bearbeitung">In Bearbeitung</option>
+                <option value="Offen">Offen</option>
+                <option value="Geschlossen">Geschlossen</option>
+            </select>
+        </div>
+        <br />
+        <button asp-action="EditAdmin" type="submit" class="btn btn-primary">Save Comment</button>
+
+    }
+
+    @if (Model.Status == "Geschlossen")
+    {
+        <h4>Ticket @Model.TicketId ist Geschlossen</h4>
+    }
+
+
+</form>
+
+<!-- Vorhandene Kommentare anzeigen -->
+<h3>Comments</h3>
+<ul class="list-group">
+    @foreach (var comment in Model.Comments)
+    {
+        <li class="list-group-item">
+            <p>@comment.Comment</p>
+            <small class="text-muted">Added on @comment.DateAdded</small>
+        </li>
+    }
+</ul>
+
+
+

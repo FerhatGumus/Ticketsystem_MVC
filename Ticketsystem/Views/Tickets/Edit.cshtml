@@ -1,0 +1,92 @@
+﻿@model Ticket
+
+<form method="post" asp-action="Edit" asp-controller="Tickets" asp-route-id="@Model.TicketId" enctype="multipart/form-data">
+
+
+    <h1>Ticket-ID @Model.TicketId</h1>
+
+    @if (Model.Status == "Offen")
+    {
+        <!-- Neuen Kommentar hinzufügen -->
+        <div class="mb-3">
+            <label for="newComment" class="form-label">Kommentar hinzufügen</label>
+            <input id="newComment" name="newCommentText" type="text" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+
+            <label for="status" class="form-label">Status:</label>
+            <select class="form-select" id="status" name="newState" typeof="text">
+                <option value="Offen">Offen</option>
+                <option value="Geschlossen">Geschlossen</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="file-upload" class="form-label">Bild Hochladen:</label>
+                <input type="file" id="file-upload" name="uploadedFile" class="form-control">
+            </div>
+        </div>
+
+        <br />
+        <button type="submit" class="btn btn-primary">Save Comment</button>
+    }
+
+    @if (Model.Status == "In Bearbeitung")
+    {
+        <!-- Neuen Kommentar hinzufügen -->
+        <div class="mb-3">
+            <label for="newComment" class="form-label">Kommentar hinzufügen</label>
+            <input id="newComment" name="newCommentText" type="text" class="form-control" />
+        </div>
+        <div class="mb-3">
+
+            <label for="status" class="form-label">Status:</label>
+            <select class="form-select" id="status" name="newState" typeof="text">
+                <option value="In Bearbeitung">In Bearbeitung</option>
+                <option value="Geschlossen">Geschlossen</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <label for="file-upload" class="form-label">Bild Hochladen:</label>
+                <input type="file" id="file-upload" name="uploadedFile" class="form-control">
+            </div>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Save Comment</button>
+    }
+
+
+    @if (Model.Status == "Geschlossen")
+    {
+        <h4>Ticket @Model.TicketId ist Geschlossen</h4>
+    }
+
+
+</form>
+
+<!-- Vorhandene Kommentare anzeigen -->
+<h3>Comments</h3>
+<ul class="list-group">
+    @foreach (var comment in Model.Comments)
+    {
+        <li class="list-group-item">
+            <p>@comment.Comment</p>
+
+            <!-- Bild anzeigen, falls vorhanden -->
+            @if (comment.Attachment != null && !string.IsNullOrEmpty(comment.Attachment.FilePath))
+            {
+                <p><strong>Anhang:</strong></p>
+                <img src="@comment.Attachment.FilePath" alt="Uploaded image" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+            }
+
+            <small class="text-muted">Added on @comment.DateAdded from @comment.Name</small>
+        </li>
+    }
+</ul>
+
+
+
+

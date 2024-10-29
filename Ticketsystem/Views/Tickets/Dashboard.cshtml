@@ -1,0 +1,165 @@
+﻿@model IEnumerable<Ticket>
+
+@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticketsystem Userbereich</title>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand mx-auto fw-bold">Ticketsystem</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Ticket-Status und Ticket erstellen -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white text-center fw-bold">Ticket-Status</div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Offene Tickets:</span>
+                            <span class="badge bg-danger fs-6 fw-bold">@ViewBag.AnzahlOffeneTickets</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>In Bearbeitung:</span>
+                            <span class="badge bg-warning text-dark fs-6 fw-bold">@ViewBag.AnzahlInBearbeitungTickets</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Geschlossen:</span>
+                            <span class="badge bg-success fs-6 fw-bold">@ViewBag.AnzahlGeschlosseneTickets</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket-Erstellen -->
+                <form method="get" asp-action="CreateTicket" asp-controller="Tickets">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-dark text-white text-center fw-bold">Ticket erstellen</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="kategorie" class="form-label">Kategorie:</label>
+                                <select class="form-select" id="kategorie" name="Kategorie">
+                                    <option value="technisch" required>Technisch</option>
+                                    <option value="allgemein">Allgemein</option>
+                                    <option value="support">Support</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="thema" class="form-label">Thema:</label>
+                                <select class="form-select" id="thema" name="Thema">
+                                    <option value="problematik" required>Problematik</option>
+                                    <option value="frage">Frage</option>
+                                    <option value="anfrage">Anfrage</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Priorität:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="prioritaet-hoch" name="Prioritaet" value="hoch" required>
+                                    <label class="form-check-label" for="prioritaet-hoch">Hoch</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="prioritaet-normal" name="Prioritaet" value="normal">
+                                    <label class="form-check-label" for="prioritaet-normal">Normal</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="prioritaet-niedrig" name="Prioritaet" value="niedrig">
+                                    <label class="form-check-label" for="prioritaet-niedrig">Niedrig</label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Erstellen</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Ticketübersicht -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white text-center fw-bold">Ticketübersicht</div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ticket-ID</th>
+                                    <th>Thema</th>
+                                    <th>Priorität</th>
+                                    <th>Status</th>
+                                    <th>Datum</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ticket in Model)
+                                {
+                                    <tr>
+                                        <td>@ticket.TicketId</td>
+                                        <td>@ticket.Subject</td>
+                                        <td>@ticket.Priority</td>
+                                        <td>@ticket.Status</td>
+                                        <td>@ticket.TicketDate.Day.@ticket.TicketDate.Month.@ticket.TicketDate.Year</td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@ticket.TicketId" class="btn btn-sm btn-warning">Edit</a>
+                                            <a asp-action="Delete" asp-route-id="@ticket.TicketId" class="btn btn-sm btn-danger delete-ticket" data-id="@ticket.TicketId">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bestätigungsmodal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Ticket löschen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bist du sicher, dass du dieses Ticket löschen möchtest?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nein</button>
+                    <button type="button" class="btn btn-danger confirm-delete">Ja, löschen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let deleteTicketId;
+
+            // Öffnet das Modal beim Klicken auf "Delete"
+            $('.delete-ticket').on('click', function(e) {
+                e.preventDefault(); // Verhindert den Standard-Link-Klick
+                deleteTicketId = $(this).data('id'); // Speichert die Ticket-ID
+                $('#deleteModal').modal('show'); // Zeiget das Modal an
+            });
+
+            // Wenn der Benutzer auf "Ja, löschen" klickt
+            $('.confirm-delete').on('click', function() {
+                // Leitet zur URL des Links weiter
+                window.location.href = '@Url.Action("Delete", "Tickets")/' + deleteTicketId;
+            });
+        });
+    </script>
+</body>
+</html>
